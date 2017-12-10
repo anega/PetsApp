@@ -1,11 +1,15 @@
 package com.example.android.pets.data;
 
+import android.annotation.SuppressLint;
 import android.content.ContentProvider;
+import android.content.ContentUris;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.UriMatcher;
 import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
+import android.support.annotation.NonNull;
 
 /**
  * {@link ContentProvider} for Pets app.
@@ -41,9 +45,26 @@ public class PetProvider extends ContentProvider {
     /**
      * Perform the query for the given URI. Use the given projection, selection, selection arguments, and sort order.
      */
+    @SuppressLint("Recycle")
     @Override
-    public Cursor query(Uri uri, String[] projection, String selection, String[] selectionArgs, String sortOrder) {
-        return null;
+    public Cursor query(@NonNull Uri uri, String[] projection, String selection, String[] selectionArgs, String sortOrder) {
+        // Get readable database
+        SQLiteDatabase database = mDbHelper.getReadableDatabase();
+        // This Cursor will hold the result of the query
+        Cursor cursor;
+
+        switch (sUriMatcher.match(uri)) {
+            case PETS:
+                cursor = database.query(PetContract.PetEntry.TABLE_NAME, projection, selection, selectionArgs, null, null, sortOrder);
+                return cursor;
+            case PET_ID:
+                selection = PetContract.PetEntry._ID + "=?";
+                selectionArgs = new String[]{String.valueOf(ContentUris.parseId(uri))};
+                cursor = database.query(PetContract.PetEntry.TABLE_NAME, projection, selection, selectionArgs, null, null, sortOrder);
+                return cursor;
+            default:
+                throw new IllegalArgumentException("Cannot query unknown URI " + uri);
+        }
     }
 
     /**
