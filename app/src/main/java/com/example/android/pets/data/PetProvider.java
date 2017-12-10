@@ -10,6 +10,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 import android.support.annotation.NonNull;
+import android.util.Log;
 
 /**
  * {@link ContentProvider} for Pets app.
@@ -71,8 +72,33 @@ public class PetProvider extends ContentProvider {
      * Insert new data into the provider with the given ContentValues.
      */
     @Override
-    public Uri insert(Uri uri, ContentValues contentValues) {
-        return null;
+    public Uri insert(@NonNull Uri uri, ContentValues contentValues) {
+        switch (sUriMatcher.match(uri)) {
+            case PETS:
+                return insertPet(uri, contentValues);
+            default:
+                throw new IllegalArgumentException("Insertion is not supported for " + uri);
+        }
+    }
+
+    /**
+     * Insert a pet into the database with the given content values. Return the new content URI
+     * for that specific row in the database.
+     */
+    private Uri insertPet(Uri uri, ContentValues contentValues) {
+        // Get writable database
+        SQLiteDatabase database = mDbHelper.getWritableDatabase();
+
+        // Insert the new pet with the given values
+        long id = database.insert(PetContract.PetEntry.TABLE_NAME, null, contentValues);
+        // If the ID is -1, then the insertion failed. Log an error and return null.
+        if (id == -1) {
+            Log.e(LOG_TAG, "Failed to insert row for " + uri);
+            return null;
+        }
+
+        // Once we know the ID of the new row in the table, return the new URI with the ID appended to the end of it
+        return ContentUris.withAppendedId(uri, id);
     }
 
     /**
