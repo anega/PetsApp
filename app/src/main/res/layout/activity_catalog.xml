@@ -16,8 +16,9 @@
     tools:context=".CatalogActivity">
 
     <ListView
+        android:id="@+id/lv_catalog_petslist"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
+        android:layout_height="match_parent" />
 
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/fab"

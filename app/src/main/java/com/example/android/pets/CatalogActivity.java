@@ -25,8 +25,10 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ListView;
 import android.widget.TextView;
 
+import com.example.android.pets.adapters.PetCursorAdapter;
 import com.example.android.pets.data.PetContract;
 
 /**
@@ -74,40 +76,12 @@ public class CatalogActivity extends AppCompatActivity {
                 null,
                 null);
 
-        TextView displayView = (TextView) findViewById(R.id.text_view_pet);
-
-        try {
-            displayView.append("The pets table contains " + cursor.getCount() + "pets. \n");
-            displayView.append(PetContract.PetEntry._ID + " - " +
-                    PetContract.PetEntry.COLUMN_PET_NAME + " - " +
-                    PetContract.PetEntry.COLUMN_PET_BREED + " - " +
-                    PetContract.PetEntry.COLUMN_PET_GENDER + " - " +
-                    PetContract.PetEntry.COLUMN_PET_WEIGHT + "\n");
-
-            int idColumnIndex = cursor.getColumnIndex(PetContract.PetEntry._ID);
-            int nameColumnIndex = cursor.getColumnIndex(PetContract.PetEntry.COLUMN_PET_NAME);
-            int breedColumnIndex = cursor.getColumnIndex(PetContract.PetEntry.COLUMN_PET_BREED);
-            int genderColumnIndex = cursor.getColumnIndex(PetContract.PetEntry.COLUMN_PET_GENDER);
-            int weightColumnIndex = cursor.getColumnIndex(PetContract.PetEntry.COLUMN_PET_WEIGHT);
-
-            while (cursor.moveToNext()) {
-                int currId = cursor.getInt(idColumnIndex);
-                String currName = cursor.getString(nameColumnIndex);
-                String currBreed = cursor.getString(breedColumnIndex);
-                int currGender = cursor.getInt(genderColumnIndex);
-                int currWeight = cursor.getInt(weightColumnIndex);
-
-                displayView.append(currId + " - " +
-                        currName + " - " +
-                        currBreed + " - " +
-                        currGender + " - " +
-                        currWeight + "\n");
-            }
-        } finally {
-            // Always close the cursor when you're done reading from it. This releases all its
-            // resources and makes it invalid.
-            cursor.close();
-        }
+        // Find the ListView which will be populated with the pet data
+        ListView petListView = (ListView) findViewById(R.id.lv_catalog_petslist);
+        // Setup an Adapter to create a list item for each row of pet data in the Cursor.
+        PetCursorAdapter adapter = new PetCursorAdapter(this, cursor);
+        // Attach the adapter to the ListView.
+        petListView.setAdapter(adapter);
     }
 
     private void insertPet() {
