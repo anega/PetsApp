@@ -26,6 +26,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ListView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.example.android.pets.adapters.PetCursorAdapter;
@@ -52,6 +53,12 @@ public class CatalogActivity extends AppCompatActivity {
                 startActivity(intent);
             }
         });
+
+        // Find the ListView which will be populated with the pet data
+        ListView petListView = (ListView) findViewById(R.id.lv_catalog_petslist);
+        // Find and set the empty view on the ListView, so that it only shows when the list has 0 items
+        View emptyView = findViewById(R.id.rl_empty_view);
+        petListView.setEmptyView(emptyView);
     }
 
     @Override
