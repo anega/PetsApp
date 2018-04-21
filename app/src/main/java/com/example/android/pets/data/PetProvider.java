@@ -159,19 +159,19 @@ public class PetProvider extends ContentProvider {
         }
 
         // Check if name key is present in contentValues
-        if (contentValues.containsKey(PetContract.PetEntry.COLUMN_PET_GENDER)) {
-            int gender = contentValues.getAsInteger(PetContract.PetEntry.COLUMN_PET_GENDER);
+        if (contentValues.containsKey(PetContract.PetEntry.COLUMN_PET_NAME)) {
+            String name = contentValues.getAsString(PetContract.PetEntry.COLUMN_PET_NAME);
             // Check that name value is not null
-            if (PetContract.PetEntry.isValidGender(gender)) {
-                throw new IllegalArgumentException("Pet requires valid gender.");
+            if (name == null) {
+                throw new IllegalArgumentException("Pet requires valid name.");
             }
         }
 
         // Check if gender key is present in contentValues
         if (contentValues.containsKey(PetContract.PetEntry.COLUMN_PET_GENDER)) {
-            int gender = contentValues.getAsInteger(PetContract.PetEntry.COLUMN_PET_GENDER);
+            Integer gender = contentValues.getAsInteger(PetContract.PetEntry.COLUMN_PET_GENDER);
             // Check if new gender value is valid
-            if (PetContract.PetEntry.isValidGender(gender)) {
+            if ((gender == null || !PetContract.PetEntry.isValidGender(gender))) {
                 throw new IllegalArgumentException("Pet requires valid gender.");
             }
         }
