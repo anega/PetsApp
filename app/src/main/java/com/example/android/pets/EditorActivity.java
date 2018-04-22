@@ -138,13 +138,26 @@ public class EditorActivity extends AppCompatActivity implements LoaderManager.L
         String petNameStr = mNameEditText.getText().toString().trim();
         String petBreedStr = mBreedEditText.getText().toString().trim();
         String petWeightStr = mWeightEditText.getText().toString().trim();
-        int petWeight = Integer.parseInt(petWeightStr);
+
+        // Check if this is supposed to be a new pet and check if all the fields in the editor are blank
+        if (mCurrentPetUri == null &&
+                TextUtils.isEmpty(petNameStr) &&
+                TextUtils.isEmpty(petBreedStr) &&
+                TextUtils.isEmpty(petWeightStr) &&
+                mGender == PetContract.PetEntry.GENDER_UNKNOWN) {
+            return;
+        }
 
         // Create a ContentValues object where column names are the keys, and pet attributes from the editor are the values.
         ContentValues values = new ContentValues();
         values.put(PetContract.PetEntry.COLUMN_PET_NAME, petNameStr);
         values.put(PetContract.PetEntry.COLUMN_PET_BREED, petBreedStr);
         values.put(PetContract.PetEntry.COLUMN_PET_GENDER, mGender);
+        // If the weight is not provided by the user, don't try to parse the string into an integer value. Use 0 by default.
+        int petWeight = 0;
+        if (!TextUtils.isEmpty(petWeightStr)) {
+            petWeight = Integer.parseInt(petWeightStr);
+        }
         values.put(PetContract.PetEntry.COLUMN_PET_WEIGHT, petWeight);
 
         // Determine if this is a new or existing pet by checking if mCurrentPetUri is null or not
